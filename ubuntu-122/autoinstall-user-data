@@ -1,0 +1,113 @@
+#cloud-config
+autoinstall:
+  apt:
+    disable_components: []
+    geoip: true
+    preserve_sources_list: false
+    primary:
+    - arches:
+      - amd64
+      - i386
+      uri: http://sg.archive.ubuntu.com/ubuntu
+    - arches:
+      - default
+      uri: http://ports.ubuntu.com/ubuntu-ports
+  drivers:
+    install: false
+  identity:
+    hostname: ubuntu-22
+    password: $6$2hSo7Jbi6/m8be7k$pTbspvVak9p6QDke4nnsmlD4X0g5v77qy.PpPMrRC6zzRhKSnjVdqiFEeKDOQySjKOtk/XgPpeLwmQle6s6XL0
+    realname: admin
+    username: admin
+  kernel:
+    package: linux-generic
+  keyboard:
+    layout: us
+    toggle: null
+    variant: ''
+  locale: en_US.UTF-8
+  network:
+    ethernets:
+      enp1s0:
+        addresses:
+        - 192.168.1.122/24
+        gateway4: 192.168.1.254
+        nameservers:
+          addresses:
+          - 192.168.1.254
+          - 1.1.1.1
+          search: []
+    version: 2
+  ssh:
+    allow-pw: true
+    authorized-keys: []
+    install-server: true
+  storage:
+    config:
+    - ptable: gpt
+      path: /dev/vda
+      wipe: superblock
+      preserve: false
+      name: ''
+      grub_device: true
+      type: disk
+      id: disk-vda
+    - device: disk-vda
+      size: 1048576
+      flag: bios_grub
+      number: 1
+      preserve: false
+      grub_device: false
+      type: partition
+      id: partition-0
+    - device: disk-vda
+      size: 1902116864
+      wipe: superblock
+      flag: ''
+      number: 2
+      preserve: false
+      grub_device: false
+      type: partition
+      id: partition-1
+    - fstype: ext4
+      volume: partition-1
+      preserve: false
+      type: format
+      id: format-0
+    - device: disk-vda
+      size: 19569573888
+      wipe: superblock
+      flag: ''
+      number: 3
+      preserve: false
+      grub_device: false
+      type: partition
+      id: partition-2
+    - name: ubuntu-vg
+      devices:
+      - partition-2
+      preserve: false
+      type: lvm_volgroup
+      id: lvm_volgroup-0
+    - name: ubuntu-lv
+      volgroup: lvm_volgroup-0
+      size: 19566428160B
+      wipe: superblock
+      preserve: false
+      type: lvm_partition
+      id: lvm_partition-0
+    - fstype: ext4
+      volume: lvm_partition-0
+      preserve: false
+      type: format
+      id: format-2
+    - path: /
+      device: format-2
+      type: mount
+      id: mount-2
+    - path: /boot
+      device: format-0
+      type: mount
+      id: mount-0
+  updates: security
+  version: 1
